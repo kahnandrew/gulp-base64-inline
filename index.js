@@ -31,10 +31,11 @@ module.exports = function (givenImagesPath) {
         }
 
         function inline (match, group1, group2, group3) {
-          util.log(match)
-          util.log(group1)
-          util.log(group2)
-          util.log(group3)
+            util.log(match)
+            util.log(group1)
+            util.log(group2)
+            util.log(group3)
+
             var imagePath = group2;
             try {
                 var fileData = fs.readFileSync(path.join(imagesPath, imagePath));
@@ -42,7 +43,7 @@ module.exports = function (givenImagesPath) {
             catch (e) {
                 gutil.log(gutil.colors.yellow('base64-inline'), 'Referenced file not found: ' + path.join(imagesPath, imagePath));
                 gutil.log(gutil.colors.yellow('base64-inline'), 'Leaving it as is.');
-                return inlineExpr;
+                return match;
             }
 
             var fileBase64 = new Buffer(fileData).toString('base64');
@@ -55,7 +56,7 @@ module.exports = function (givenImagesPath) {
 
         // check if file.contents is a `Buffer`
         if (file.isBuffer()) {
-            var base64 = String(file.contents).replace(/<img(.*)src=["']([^"']*)["']([^>]*)>/g, inline);
+            var base64 = String(file.contents).replace(/<img(.*)src=["']([^:"']*)["']([^>]*)>/g, inline);
             file.contents = new Buffer(base64);
 
             this.push(file);
