@@ -47,7 +47,7 @@ module.exports = function (givenImagesPath) {
 
             var fileBase64 = new Buffer(fileData).toString('base64');
             var fileMime = mime.lookup(imagePath);
-            var result = '<img' group1 + 'src="data:' + fileMime  + ';base64,' + fileBase64 + '"' + group3 + '>';
+            var result = '<img' + group1 + 'src="data:' + fileMime  + ';base64,' + fileBase64 + '"' + group3 + '>';
 
             console.log(result);
             return result;
