@@ -3,6 +3,7 @@ var gutil = require('gulp-util');
 var path = require('path');
 var fs = require('fs');
 var mime = require('mime');
+var util = require('gulp-util');
 
 module.exports = function (givenImagesPath) {
     function base64Inline (file, enc, callback) {
@@ -29,8 +30,12 @@ module.exports = function (givenImagesPath) {
             return callback();
         }
 
-        function inline (inlineExpr, quotedPath) {
-            var imagePath = quotedPath.replace(/['"]/g, '');
+        function inline (match, group1, group2, group3) {
+          util.log(match)
+          util.log(group1)
+          util.log(group2)
+          util.log(group3)
+            var imagePath = group2;
             try {
                 var fileData = fs.readFileSync(path.join(imagesPath, imagePath));
             }
@@ -42,12 +47,15 @@ module.exports = function (givenImagesPath) {
 
             var fileBase64 = new Buffer(fileData).toString('base64');
             var fileMime = mime.lookup(imagePath);
-            return 'url(data:' + fileMime  + ';base64,' + fileBase64 + ')';
+            var result = '<img' group1 + 'src="data:' + fileMime  + ';base64,' + fileBase64 + '"' + group3 + '>';
+
+            console.log(result);
+            return result;
         }
 
         // check if file.contents is a `Buffer`
         if (file.isBuffer()) {
-            var base64 = String(file.contents).replace(/inline\(([^\)]+)\)/g, inline);
+            var base64 = String(file.contents).replace(/<img(.*)src=["']([^"']*)["']([^>]*)>/g, inline);
             file.contents = new Buffer(base64);
 
             this.push(file);
